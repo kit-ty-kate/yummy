@@ -1,0 +1,8 @@
+(menhir (modules parser))
+(ocamllex lexer)
+
+(library
+  (name yummy)
+  (public_name yummy)
+  (flags :standard -safe-string)
+  (modules_without_implementation parseTree))

@@ -1,4 +1,4 @@
-type level = int list
+type level = int
 type key = string
 
 type value =

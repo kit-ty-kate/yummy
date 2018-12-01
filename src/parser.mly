@@ -15,29 +15,36 @@ let main :=
   | level; EOF; { [] }
 
 let line :=
-  | lvl = level; k = Word; Colon; Spaces?; newline; { (lvl, ParseTree.Map (k, None)) }
-  | lvl = level; k = Word; Colon; Spaces; str = value; newline; { (lvl, ParseTree.Map (k, Some str)) }
-  | lvl = level; str = string; newline; { (lvl, ParseTree.String str) }
-  | lvl = level; Hyphen; Spaces?; newline; { (lvl, ParseTree.ListElm None) }
-  | lvl = level; Hyphen; Spaces; str = value; newline; { (lvl, ParseTree.ListElm (Some str)) }
+  | lvl = level; t = stmt; newline; { (lvl, t) }
+
+let stmt :=
+  | k = string_colon; t = stmt_value; { ParseTree.Map (k, t) }
+  | str = string; { ParseTree.String str }
+  | Hyphen; t = stmt_value; { ParseTree.ListElm t }
+
+let stmt_value :=
+  | Spaces?; { None }
+  | Spaces; t = stmt; { Some t }
 
 let level :=
   | { 0 }
   | lvl = Spaces; { lvl }
   | Spaces; Newline; x = level; { x }
 
+let string_colon :=
+  | w = Word; opt(Spaces); Colon; { w }
+  | w = Word; ws = string_colon; { w^ws }
+  | Colon; ws = string_colon; { ":"^ws }
+  | w = Word; n = Spaces; ws = string_colon; { w^String.make n ' '^ws }
+
 let string :=
   | w = Word; Spaces?; { w }
-  | w = value_elm; ws = string; { w^ws }
-  | w1 = Word; n = Spaces; w2 = value_elm; ws = string; { w1^String.make n ' '^w2^ws }
-
-let value :=
-  | w = value_elm; Spaces?; { w }
-  | w = value_elm; ws = value; { w^ws }
-  | w1 = value_elm; n = Spaces; w2 = value_elm; ws = value; { w1^String.make n ' '^w2^ws }
-
-let value_elm ==
-  | w = Word; { w }
-  | Colon; { ":" }
+  | w = Word; ws = string; { w^ws }
+  | Colon; ws = string; { ":"^ws }
+  | w = Word; n = Spaces; ws = string; { w^String.make n ' '^ws }
 
 let newline := Newline | EOF
+
+let opt(X) ==
+  | { None }
+  | x = X; { Some x }

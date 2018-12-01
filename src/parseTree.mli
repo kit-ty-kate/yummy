@@ -2,8 +2,8 @@ type level = int
 type key = string
 
 type value =
-  | Map of key * string option
+  | Map of key * value option
   | String of string
-  | ListElm of string option
+  | ListElm of value option
 
 type t = (level * value) list

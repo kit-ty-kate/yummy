@@ -5,4 +5,5 @@
   (name yummy)
   (public_name yummy)
   (flags :standard -safe-string)
-  (modules_without_implementation parseTree))
+  (modules_without_implementation parseTree)
+  (libraries angstrom containers))

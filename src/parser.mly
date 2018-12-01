@@ -29,7 +29,7 @@ let stmt_value :=
 let level :=
   | { 0 }
   | lvl = Spaces; { lvl }
-  | Spaces; Newline; x = level; { x }
+  | Spaces?; Newline; x = level; { x }
 
 let string(final) :=
   | w = Word; opt(Spaces); final; { w }

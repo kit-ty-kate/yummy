@@ -29,7 +29,7 @@ and get_map_content indent x l =
     | Some x -> (succ indent, x)::l
   in
   match l with
-  | (i, (ParseTree.ListElm x))::l when i >= indent -> let (a, l) = add_to_list i x l in (`A a, l)
+  | (i, (ParseTree.ListElm _ as x))::l when i >= indent -> check i x l
   | (i, (ParseTree.String _ as x))::l when i > indent -> check (succ indent) x l
   | (i, x)::l when i > indent -> check i x l
   | _::_ | [] -> (`String "", l) (* TODO: define null *)

@@ -1,5 +1,10 @@
 let f x =
-  Parser.main Lexer.main (Lexing.from_string x)
+  Checker.check (Parser.main Lexer.main (Lexing.from_string x))
+
+let f' x =
+  let x = open_in x in
+  let x = Lexing.from_channel x in
+  Checker.check (Parser.main Lexer.main x)
 
 type line =
   | Empty

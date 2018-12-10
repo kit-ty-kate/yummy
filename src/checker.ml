@@ -8,13 +8,8 @@ type value = [
 ]
 
 (* TODO: Allow ListElm but need spaces from colon *)
-(* TODO: Find a way to allow:
-x:
-  a
- b
-== "a b" *)
 let rec concat_strings indent str = function
-  | (i, ParseTree.String s)::xs when i >= indent -> concat_strings indent (str ^ s) xs
+  | (i, ParseTree.String s)::xs when i >= indent -> concat_strings indent (str ^ " " ^ s) xs
   | l -> (`String str, l)
 
 let rec check indent x l = match x, l with
@@ -35,6 +30,7 @@ and get_map_content indent x l =
   in
   match l with
   | (i, (ParseTree.ListElm x))::l when i >= indent -> let (a, l) = add_to_list i x l in (`A a, l)
+  | (i, (ParseTree.String _ as x))::l when i > indent -> check (succ indent) x l
   | (i, x)::l when i > indent -> check i x l
   | _::_ | [] -> (`String "", l) (* TODO: define null *)
 
@@ -54,6 +50,7 @@ and get_listelm_content indent x l =
     | Some (ParseTree.(Map _ | ListElm _) as x) -> (indent + 2, x)::l (* TODO: replace +2 by +Spaces *)
   in
   match l with
+  | (i, (ParseTree.String _ as x))::l when i > indent -> check (succ indent) x l
   | (i, x)::l when i > indent -> check i x l
   | _::_ | [] -> (`String "", l) (* TODO: define null *)
 
